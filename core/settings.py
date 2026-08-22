@@ -107,9 +107,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 12,
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
 WAGTAIL_SITE_NAME = 'Rehab Directory'
 WAGTAILADMIN_BASE_URL = 'http://localhost:8000'

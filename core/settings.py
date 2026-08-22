@@ -1,7 +1,8 @@
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 import dj_database_url
+import os
+
 
 load_dotenv()
 
@@ -83,7 +84,7 @@ TEMPLATES = [{
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgresql://{os.getenv('DB_USER', 'postgres')}:{os.getenv('DB_PASSWORD', 'root')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME', 'rehab_backend')}",
+        default=os.getenv('DATABASE_URL', 'postgresql://postgres:root@localhost:5432/rehab_backend'),
         conn_max_age=600,
     )
 }

@@ -7,7 +7,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 DEFAULT_FROM_EMAIL = 'noreply@rehabdirectory.in'
 ADMIN_EMAIL = 'your@email.com'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

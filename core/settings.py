@@ -82,13 +82,13 @@ TEMPLATES = [{
     },
 }]
 
+print("DATABASE_URL:", os.getenv('DATABASE_URL', 'NOT SET'))
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL', 'postgresql://postgres:root@localhost:5432/rehab_backend'),
         conn_max_age=600,
     )
 }
-
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',

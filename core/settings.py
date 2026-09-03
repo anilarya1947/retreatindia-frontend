@@ -115,7 +115,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
 WAGTAIL_SITE_NAME = 'Rehab Directory'
-WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
+WAGTAILADMIN_BASE_URL = os.getenv('WAGTAILADMIN_BASE_URL', 'http://localhost:8000')
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'

@@ -41,9 +41,8 @@ class RehabCenterListSerializer(serializers.ModelSerializer):
         model = RehabCenter
         fields = [
             'id', 'name', 'slug', 'short_description',
-            'city', 'address', 'phone', 'whatsapp',
-            'gender', 'price_range', 'price_range_display','insurance_accepted',
-            'featured', 'verified',
+            'city', 'state', 'address', 'mobile', 'whatsapp',
+            'price_range', 'price_range_display',
             'treatment_types', 'photos',
         ]
 
@@ -62,9 +61,7 @@ class RehabCenterDetailSerializer(serializers.ModelSerializer):
             'address', 'city', 'state', 'pincode',
             'google_maps_url', 'lat', 'lng',
             'phone', 'email', 'website', 'whatsapp',
-            'gender', 'price_range', 'category', 'surrounding',
-            'insurance_accepted', 'patient_profiles', 'languages',
-            'featured', 'verified',
+            'price_range', 'category', 'surrounding', 'patient_profiles', 'languages',
             # highlights
             'experience_years', 'min_program_duration', 'total_rooms', 'total_beds',
             # facilities

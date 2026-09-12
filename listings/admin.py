@@ -1,5 +1,68 @@
+from django import forms
 from django.contrib import admin
-from .models import RehabCenter, TreatmentType, Amenity, RehabCenterPhoto, RehabCenterTeamMember, RehabCenterAboutSection
+from .models import (
+    RehabCenter, TreatmentType, Amenity,
+    RehabCenterPhoto, RehabCenterTeamMember, RehabCenterAboutSection,
+    SURROUNDING_CHOICES, TREATMENT_CHOICES, PATIENT_PROFILE_CHOICES,
+    MAIN_FACILITIES_CHOICES, IN_ROOM_FACILITIES_CHOICES,
+    CENTER_FACILITIES_CHOICES, ACTIVITIES_CHOICES, LANGUAGE_CHOICES,
+)
+
+
+class MultiCheckboxWidget(forms.CheckboxSelectMultiple):
+    pass
+
+
+class MultiCheckboxField(forms.MultipleChoiceField):
+    widget = MultiCheckboxWidget
+
+
+class RehabCenterAdminForm(forms.ModelForm):
+    languages = MultiCheckboxField(choices=LANGUAGE_CHOICES, required=False)
+    surroundings = MultiCheckboxField(choices=SURROUNDING_CHOICES, required=False)
+    treatments = MultiCheckboxField(choices=TREATMENT_CHOICES, required=False)
+    patient_profiles = MultiCheckboxField(choices=PATIENT_PROFILE_CHOICES, required=False)
+    main_facilities = MultiCheckboxField(choices=MAIN_FACILITIES_CHOICES, required=False)
+    in_room_facilities = MultiCheckboxField(choices=IN_ROOM_FACILITIES_CHOICES, required=False)
+    center_facilities = MultiCheckboxField(choices=CENTER_FACILITIES_CHOICES, required=False)
+    activities = MultiCheckboxField(choices=ACTIVITIES_CHOICES, required=False)
+
+    class Meta:
+        model = RehabCenter
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Pre-populate checkboxes from JSON fields
+        instance = kwargs.get('instance')
+        if instance:
+            for field in ['languages', 'surroundings', 'treatments', 'patient_profiles',
+                          'main_facilities', 'in_room_facilities', 'center_facilities', 'activities']:
+                self.initial[field] = getattr(instance, field, [])
+
+    def clean_languages(self):
+        return self.cleaned_data.get('languages', [])
+
+    def clean_surroundings(self):
+        return self.cleaned_data.get('surroundings', [])
+
+    def clean_treatments(self):
+        return self.cleaned_data.get('treatments', [])
+
+    def clean_patient_profiles(self):
+        return self.cleaned_data.get('patient_profiles', [])
+
+    def clean_main_facilities(self):
+        return self.cleaned_data.get('main_facilities', [])
+
+    def clean_in_room_facilities(self):
+        return self.cleaned_data.get('in_room_facilities', [])
+
+    def clean_center_facilities(self):
+        return self.cleaned_data.get('center_facilities', [])
+
+    def clean_activities(self):
+        return self.cleaned_data.get('activities', [])
 
 
 class PhotoInline(admin.TabularInline):
@@ -19,39 +82,52 @@ class AboutSectionInline(admin.TabularInline):
 
 @admin.register(RehabCenter)
 class RehabCenterAdmin(admin.ModelAdmin):
-    list_display = ['name', 'city', 'featured', 'verified', 'created_at']
-    list_filter = ['featured', 'verified', 'gender', 'price_range', 'category']
-    search_fields = ['name', 'city', 'address']
+    form = RehabCenterAdminForm
+    list_display = ['name', 'district', 'state', 'centre_type', 'price_range']
+    list_filter = ['centre_type', 'price_range', 'state']
+    search_fields = ['name', 'district', 'state', 'mobile', 'email']
     prepopulated_fields = {'slug': ('name',)}
-    list_editable = ['featured', 'verified']
     inlines = [PhotoInline, TeamMemberInline, AboutSectionInline]
 
     fieldsets = (
-        ('Basic Info', {
-            'fields': ('name', 'slug', 'short_description', 'description')
+        ('Basic Information', {
+            'fields': ('name', 'slug', 'mobile', 'mobile_alternate', 'email', 'website', 'whatsapp')
         }),
         ('Location', {
-            'fields': ('address', 'city', 'state', 'pincode', 'google_maps_url', 'lat', 'lng')
+            'fields': ('district', 'state', 'city', 'address', 'pincode', 'google_maps_url', 'lat', 'lng')
         }),
-        ('Contact', {
-            'fields': ('phone', 'email', 'website', 'whatsapp')
+        ('Centre Details', {
+            'fields': ('centre_type', 'certified_from', 'about', 'short_description')
         }),
-        ('Filters', {
-            'fields': ('treatment_types', 'amenities', 'gender', 'price_range', 'category', 'surrounding', 'insurance_accepted', 'patient_profiles', 'languages')
+        ('Program Details', {
+            'fields': ('experience_years', 'program_duration_min', 'program_duration_max', 'occupancy', 'price_range')
         }),
-        ('Center Highlights', {
-            'fields': ('experience_years', 'min_program_duration', 'total_rooms', 'total_beds')
+        ('Languages', {
+            'fields': ('languages',)
         }),
-        ('Facilities', {
-            'fields': ('in_room_facilities', 'center_facilities', 'recreational_activities', 'therapies'),
-            'description': 'Enter as JSON lists e.g. ["Air Conditioning", "Smart TV"]'
+        ('Surroundings', {
+            'fields': ('surroundings',)
         }),
-        ('Videos', {
-            'fields': ('videos',),
-            'description': 'Enter as JSON list of video URLs'
+        ('Treatments', {
+            'fields': ('treatments', 'treatment_types')
         }),
-        ('Status', {
-            'fields': ('featured', 'verified')
+        ('Patient Profile', {
+            'fields': ('patient_profiles',)
+        }),
+        ('Main Facilities', {
+            'fields': ('main_facilities',)
+        }),
+        ('In-Room Facilities', {
+            'fields': ('in_room_facilities',)
+        }),
+        ('Center Facilities', {
+            'fields': ('center_facilities',)
+        }),
+        ('Activities', {
+            'fields': ('activities',)
+        }),
+        ('Additional', {
+            'fields': ('amenities', 'therapies', 'videos')
         }),
         ('SEO', {
             'fields': ('seo_title', 'seo_description'),

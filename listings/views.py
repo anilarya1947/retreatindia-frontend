@@ -17,6 +17,10 @@ class RehabCenterListView(generics.ListAPIView):
     def get_queryset(self):
         queryset = RehabCenter.objects.all()
 
+        pk = self.request.query_params.get('pk')
+        if pk:
+            queryset = queryset.filter(pk=pk)
+
         # Search
         query = self.request.query_params.get('q')
         if query:
@@ -48,17 +52,14 @@ class RehabCenterListView(generics.ListAPIView):
         if surrounding:
             queryset = queryset.filter(surrounding=surrounding)
 
-        insurance = self.request.query_params.get('insurance')
-        if insurance == 'true':
-            queryset = queryset.filter(insurance_accepted=True)
-
-        featured = self.request.query_params.get('featured')
-        if featured == 'true':
-            queryset = queryset.filter(featured=True)
 
         return queryset.distinct()
 
-
+class RehabCenterByIdView(generics.RetrieveAPIView):
+    serializer_class = RehabCenterListSerializer
+    queryset = RehabCenter.objects.all()
+    lookup_field = 'pk'
+    
 class RehabCenterDetailView(generics.RetrieveAPIView):
     serializer_class = RehabCenterDetailSerializer
     queryset = RehabCenter.objects.all()
